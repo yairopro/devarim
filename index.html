@@ -1,4 +1,4 @@
-devarim<header>
+<header>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </header>
 
@@ -14,6 +14,13 @@ devarim<header>
 	</table>
 
 	<script>
+
+		const SECOND = 1000;
+		const MINUTE = 60 * SECOND;
+		const HOUR = 60 * MINUTE;
+		const DAY = 24 * HOUR;
+		const WEEK = 7 * DAY;
+
 		const people = [
 			"💚 Louisette",
 			"🧡 Déborah ",
@@ -29,23 +36,24 @@ devarim<header>
 			"🖤 Audelia ",
 		];
 
+
 		const parachiot = [
-			"VAYÉLEH",
-			"AAZINOU",
-			"VEZOT HABRAHA",
-			"KI TETSÉ",
-			"KI TAVO",
-			"NITSAVIM",
-			"DVARIM",
+			"DEVARIM", // 22/06
 			"VAETHANAN",
 			"EKEV",
 			"RÉE",
 			"SHOFTIM",
+			"KI TETSÉ",
+			"KI TAVO",
+			"NITSAVIM",
+			"VAYÉLEH",
+			"AAZINOU",
+			"VEZOT HABRAHA",
 			"55 derniers PSOUKIM",
 		];
 
 
-		const content = zip(people, shuffle(parachiot, chabatKey()));
+		const content = zip(people, shift(parachiot, chabatShiftAmount()));
 		const table = document.getElementById("table");
 		content.forEach((contentRow) => {
 			const row = document.createElement("tr");
@@ -59,15 +67,17 @@ devarim<header>
 
 
 		// ------
-		function shuffle(array, key) {
-			const copy = array.slice();
-			const result = [];
-			while (copy.length) {
-				const index = key % copy.length;
-				const [item] = copy.splice(index, 1);
-				result.push(item);
-			}
-			return result;
+		function shift(array, amount) {
+			const index = array.length - amount % array.length;
+
+			const start = array.slice(0, index);
+			const end = array.slice(index, array.length);
+			return end.concat(start);
+			// [1, 2, 3, 4] // amount 0
+			// [4][1, 2, 3] // amount 1
+			// [3, 4][1, 2] // amount 2
+			// [2, 3, 4][1] // amount 3
+			// [1, 2, 3, 4] // amount 4  
 		}
 
 		function zip(array1, array2) {
@@ -76,28 +86,43 @@ devarim<header>
 
 
 		function nextSaturday() {
-			let date = new Date();
+			const date = new Date();
 			date.setDate(date.getDate() + (6 + 7 - date.getDay()) % 7);
-			return date;
+			return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 		}
 
-		function chabatKey() {
-			return nextSaturday().getDate();
+		function chabatShiftAmount() {
+			const start = new Date(2024, 5, 8);
+			const nextChabat = nextSaturday();
+			const numberOfShabatSinceStart = Math.round((nextChabat.valueOf() - start.valueOf()) / WEEK);
+			console.log({
+				start,
+				nextChabat,
+				numberOfShabatSinceStart
+			});
+			return numberOfShabatSinceStart;
 		}
+
+
 	</script>
 
 	<style>
+		html {
+			height: 100vh;
+			overflow: scroll;
+		}
+
 		body {
+			margin: 0;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
 			height: 100vh;
 			background: linear-gradient(to right, #a09af9, #ed89fc);
-			overflow: scroll;
 		}
 
-		body > * {
+		body>* {
 			flex-shrink: 0;
 			min-height: 0;
 		}
@@ -105,18 +130,12 @@ devarim<header>
 		#table {
 			font-family: Arial, Helvetica, sans-serif;
 			border-collapse: collapse;
-			backdrop-filter: blur(5px);
-			background-color: #ffffff60;
 		}
 
 		#table td,
 		#table th {
 			border: 1px solid #ddd;
 			padding: 8px;
-		}
-
-		#table tr:nth-child(even) {
-			background-color: #00000010;
 		}
 
 		#table tr:nth-child(odd) {
