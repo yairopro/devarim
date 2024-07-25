@@ -1,0 +1,133 @@
+devarim<header>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</header>
+
+<body>
+	<h1>ספר דברים</h1>
+
+	<table id="table">
+		<tr>
+			<th>Nom</th>
+			<th>Paracha</th>
+		</tr>
+
+	</table>
+
+	<script>
+		const people = [
+			"💚 Louisette",
+			"🧡 Déborah ",
+			"💙 Hanna Berguig ",
+			"💜 Esther  ",
+			"🩶 Hanna Behar",
+			"🤍 Juliette",
+			"❤️ Haya",
+			"🩵 Ludivine",
+			"💛 Orly ",
+			"🤎 Ruth ",
+			"🩷 Patricia.",
+			"🖤 Audelia ",
+		];
+
+		const parachiot = [
+			"VAYÉLEH",
+			"AAZINOU",
+			"VEZOT HABRAHA",
+			"KI TETSÉ",
+			"KI TAVO",
+			"NITSAVIM",
+			"DVARIM",
+			"VAETHANAN",
+			"EKEV",
+			"RÉE",
+			"SHOFTIM",
+			"55 derniers PSOUKIM",
+		];
+
+
+		const content = zip(people, shuffle(parachiot, chabatKey()));
+		const table = document.getElementById("table");
+		content.forEach((contentRow) => {
+			const row = document.createElement("tr");
+			contentRow.forEach(text => {
+				const cell = document.createElement("td");
+				cell.innerText = text;
+				row.appendChild(cell);
+			});
+			table.appendChild(row);
+		});
+
+
+		// ------
+		function shuffle(array, key) {
+			const copy = array.slice();
+			const result = [];
+			while (copy.length) {
+				const index = key % copy.length;
+				const [item] = copy.splice(index, 1);
+				result.push(item);
+			}
+			return result;
+		}
+
+		function zip(array1, array2) {
+			return array1.map((item, index) => [item, array2[index]]);
+		}
+
+
+		function nextSaturday() {
+			let date = new Date();
+			date.setDate(date.getDate() + (6 + 7 - date.getDay()) % 7);
+			return date;
+		}
+
+		function chabatKey() {
+			return nextSaturday().getDate();
+		}
+	</script>
+
+	<style>
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+			background: linear-gradient(to right, #a09af9, #ed89fc);
+			overflow: scroll;
+		}
+
+		body > * {
+			flex-shrink: 0;
+			min-height: 0;
+		}
+
+		#table {
+			font-family: Arial, Helvetica, sans-serif;
+			border-collapse: collapse;
+			backdrop-filter: blur(5px);
+			background-color: #ffffff60;
+		}
+
+		#table td,
+		#table th {
+			border: 1px solid #ddd;
+			padding: 8px;
+		}
+
+		#table tr:nth-child(even) {
+			background-color: #00000010;
+		}
+
+		#table tr:nth-child(odd) {
+			background-color: #ffffff30;
+		}
+
+		#table th {
+			padding-top: 12px;
+			padding-bottom: 12px;
+			background-color: #6f00ff;
+			color: white;
+		}
+	</style>
+</body>
