@@ -16,7 +16,6 @@
 	</div>
 
 	<script>
-
 		const SECOND = 1000;
 		const MINUTE = 60 * SECOND;
 		const HOUR = 60 * MINUTE;
@@ -70,8 +69,9 @@
 
 		// ------
 		function shift(array, amount) {
-			const start = array.slice(0, amount);
-			const end = array.slice(amount, array.length);
+			const index = amount % array.length;
+			const start = array.slice(0, index);
+			const end = array.slice(index, array.length);
 			return end.concat(start);
 			// [1, 2, 3, 4] // amount 0
 			// [2, 3, 4][1] // amount 1
