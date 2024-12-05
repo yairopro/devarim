@@ -54,7 +54,10 @@
 		];
 
 
-		const content = zip(people, shift(parachiot, chabatShiftAmount()));
+		const missedShift = 1;
+		const totalShift = chabatShiftAmount() - missedShift;
+
+		const content = zip(people, shift(parachiot, totalShift));
 		const table = document.getElementById("table");
 		content.forEach((contentRow) => {
 			const row = document.createElement("tr");
