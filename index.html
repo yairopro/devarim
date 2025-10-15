@@ -4,6 +4,8 @@
 
 <body>
 	<div class="view" style="flex: 1; align-items: center; justify-content: center;">
+		<div id="edit-button" onclick="toggleEditMode()">Edit</div>
+
 		<h1>ספר דברים</h1>
 
 		<table id="table">
@@ -12,6 +14,7 @@
 				<th>Paracha</th>
 			</tr>
 		</table>
+		<div id="loading">Chargement...</div>
 
 		<div style="text-align: center; margin-top: 30px;">
 			<div>A la mémoire de</div>
@@ -56,21 +59,41 @@
 			"55 derniers PSOUKIM",
 		];
 
+		const bucket = `https://kvdb.io/AjyzgYaixz8nzMeFrfH9Av/shift`;
 
-		const missedShift = 1;
-		const totalShift = chabatShiftAmount() - missedShift;
+		loadManualShift().then(render);
 
-		const content = zip(people, shift(parachiot, totalShift));
 		const table = document.getElementById("table");
-		content.forEach((contentRow) => {
-			const row = document.createElement("tr");
-			contentRow.forEach(text => {
-				const cell = document.createElement("td");
-				cell.innerText = text;
-				row.appendChild(cell);
+		function render(manualShift) {
+			const totalShift = chabatShiftAmount() - manualShift;
+			const content = zip(people, shift(parachiot, totalShift));
+			content.forEach((contentRow, index) => {
+				const row = table.children[index] ?? document.createElement("tr");
+				contentRow.forEach((text, index) => {
+					const cell = row.children[index] ?? document.createElement("td");
+					cell.innerText = text;
+
+					if (!cell.parentElement)
+						row.appendChild(cell);
+				});
+
+				if (!row.parentElement)
+					table.appendChild(row);
 			});
-			table.appendChild(row);
-		});
+
+			document.getElementById("loading")?.remove();
+		}
+
+		async function loadManualShift() {
+			const response = await fetch(bucket);
+			if (!response.ok) return;
+			const txt = await response.text();
+			if (!isNaN(txt)) return Number(txt);
+		}
+
+		async function saveManualShift(shift) {
+			fetch(bucket, { method: "POST", body: String(shift) });
+		}
 
 
 		// ------
@@ -109,7 +132,9 @@
 			return numberOfShabatSinceStart;
 		}
 
+		function toggleEditMode() {
 
+		}
 	</script>
 
 	<style>
